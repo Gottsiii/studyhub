@@ -1,0 +1,17 @@
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import authRoutes from './modules/auth/auth.routes';
+import taskRoutes from './modules/tasks/task.routes';
+import { errorHandler } from './middlewares/errorHandler';
+const app = express();
+app.use(helmet());
+app.use(cors({ origin: true, credentials: true }));
+app.use(express.json());
+app.use(rateLimit({ windowMs: 15*60*1000, max: 300 }));
+app.get('/api/health', (_req, res) => res.json({ ok: true }));
+app.use('/api/auth', authRoutes);
+app.use('/api/tasks', taskRoutes);
+app.use(errorHandler);
+export default app;
